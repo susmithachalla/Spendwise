@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Terms and Conditions — Spend Wise{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/terms.css') }}">
+{% endblock %}
+
+{% block content %}
+<article class="terms-page" aria-labelledby="terms-title">
+    <header class="terms-heading">
+        <a class="terms-back" href="{{ url_for('landing') }}">← Back to home</a>
+        <p class="terms-eyebrow">Spend Wise · Terms of service</p>
+        <h1 id="terms-title">Terms and Conditions</h1>
+        <p class="terms-intro">A clear understanding of how to use Spend Wise, your responsibilities, and what to expect from the service.</p>
+        <p class="terms-date">Last updated: <time datetime="2026-09-28">September 28, 2026</time></p>
+    </header>
+
+    <div class="terms-layout">
+        <nav class="terms-contents" aria-label="Terms sections">
+            <h2>On this page</h2>
+            <a href="#acceptance">01 · Acceptance of Terms</a>
+            <a href="#use">02 · Use of Service</a>
+            <a href="#data">03 · User Data</a>
+            <a href="#liability">04 · Limitations of Liability</a>
+            <a href="#changes">05 · Changes to Terms</a>
+        </nav>
+
+        <div class="terms-card">
+            <section id="acceptance" aria-labelledby="acceptance-title">
+                <span class="terms-number" aria-hidden="true">01</span>
+                <h2 id="acceptance-title">Acceptance of Terms</h2>
+                <p>These terms govern your use of Spend Wise, a personal expense-tracking service. By using the service, you agree to these terms. If you do not agree, please stop using the service.</p>
+                <p>You must be legally able to agree to these terms in your location. You are responsible for using the service in accordance with applicable laws.</p>
+            </section>
+            <section id="use" aria-labelledby="use-title">
+                <span class="terms-number" aria-hidden="true">02</span>
+                <h2 id="use-title">Use of Service</h2>
+                <p>Spend Wise provides tools to help you record and organize personal expenses and understand your spending. Available features may change over time. The service provides information for personal organization and does not provide financial, investment, tax, or legal advice.</p>
+                <ul>
+                    <li>Provide accurate account information and keep your sign-in details private.</li>
+                    <li>Review your entries and any summaries before relying on them for budgeting decisions.</li>
+                    <li>Use only accounts and information you are authorized to access.</li>
+                    <li>Do not interfere with the service, attempt unauthorized access, or upload harmful or unlawful content.</li>
+                </ul>
+                <p>Access may be restricted when necessary to address misuse or protect the service and its users. Availability may be interrupted by maintenance, technical problems, or circumstances beyond our control.</p>
+            </section>
+            <section id="data" aria-labelledby="data-title">
+                <span class="terms-number" aria-hidden="true">03</span>
+                <h2 id="data-title">User Data</h2>
+                <p>You retain ownership of the expense records and other content you submit. You give Spend Wise permission to process that content as needed to provide the features you use, such as storing entries and displaying spending summaries.</p>
+                <p>You are responsible for the accuracy of your entries and for having permission to submit them. Avoid including bank passwords, full payment-card details, or unnecessary sensitive information in expense descriptions.</p>
+                <p>Keep your own copies of important financial records. Spend Wise should not be your only record of payments, receipts, or tax-related information. These terms do not waive any privacy or data-protection rights you have under applicable law.</p>
+            </section>
+            <section id="liability" aria-labelledby="liability-title">
+                <span class="terms-number" aria-hidden="true">04</span>
+                <h2 id="liability-title">Limitations of Liability</h2>
+                <p>To the extent permitted by applicable law, the service is provided on an “as is” and “as available” basis, without warranties that it will always be available, error-free, or suitable for every purpose. Summaries depend on the information entered and may contain errors.</p>
+                <p>To the extent permitted by law, Spend Wise and its operators are not liable for indirect or consequential losses arising from use of the service, including lost profits, missed savings, or loss of data. You remain responsible for your spending and financial decisions.</p>
+                <p>Nothing in these terms excludes or limits liability or consumer rights that cannot lawfully be excluded or limited.</p>
+            </section>
+            <section id="changes" aria-labelledby="changes-title">
+                <span class="terms-number" aria-hidden="true">05</span>
+                <h2 id="changes-title">Changes to Terms</h2>
+                <p>These terms may be updated as the service evolves. Updated terms will be posted on this page with a revised date. Where required by law, material changes will be communicated and consent obtained before they take effect.</p>
+                <p>Please review this page periodically. If you do not agree to updated terms, stop using the service. Changes do not remove rights you already have under applicable law.</p>
+            </section>
+        </div>
+    </div>
+</article>
+{% endblock %}
