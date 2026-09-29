@@ -1,10 +1,25 @@
+# Environment / secrets
 .env
 .env.*
 !.env.example
+
+# Local databases
 *.db
 *.db-*
 *.sqlite*
-__pycache__/
+
+# Python
 .venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Flask local instance data
+instance/
+
+# Node
 node_modules/
+
+# macOS
 .DS_Store
