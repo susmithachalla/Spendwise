@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy — Spend Wise{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/terms.css') }}">
+{% endblock %}
+
+{% block content %}
+<article class="terms-page" aria-labelledby="privacy-title">
+    <header class="terms-heading">
+        <a class="terms-back" href="{{ url_for('landing') }}">← Back to home</a>
+        <p class="terms-eyebrow">Spend Wise · Your privacy</p>
+        <h1 id="privacy-title">Privacy Policy</h1>
+        <p class="terms-intro">Understand what information is involved when you use Spend Wise, how it is used, and where to direct your privacy questions.</p>
+        <p class="terms-date">Last updated: <time datetime="2026-09-28">September 28, 2026</time></p>
+    </header>
+
+    <div class="terms-layout">
+        <nav class="terms-contents" aria-label="Privacy policy sections">
+            <h2>On this page</h2>
+            <a href="#collection">01 · Data We Collect</a>
+            <a href="#usage">02 · How We Use Your Data</a>
+            <a href="#storage">03 · Data Storage</a>
+            <a href="#third-parties">04 · Third Party Services</a>
+            <a href="#contact">05 · Contact Us</a>
+        </nav>
+
+        <div class="terms-card">
+            <section id="collection" aria-labelledby="collection-title">
+                <span class="terms-number" aria-hidden="true">01</span>
+                <h2 id="collection-title">Data We Collect</h2>
+                <p>Spend Wise lets you save expenses in a browser workspace. Account creation and sign-in are not yet available in this version.</p>
+                <ul>
+                    <li><strong>Account information:</strong> The sign-up and sign-in forms ask for information such as your name, email address, and password. This version does not create an account or save those submissions.</li>
+                    <li><strong>Expense information:</strong> We store the amount, currency, date, category, and description you save, along with the record’s creation time and a random identifier for your browser workspace. Illustrative figures on the landing page remain demonstration data.</li>
+                    <li><strong>Technical information:</strong> When you visit, the server receives request information such as your IP address, requested page, and browser details. Server logs may record this information, depending on how the site is hosted.</li>
+                </ul>
+                <p>Opening the expense workspace creates an essential session cookie containing a random workspace identifier and a form-security token. It also remembers your last selected currency. Expense records are stored on the server, not in this cookie. The cookie expires after one year without activity. This version does not add advertising trackers or analytics scripts.</p>
+                <p>Please avoid entering passwords into preview sign-in forms or unnecessary sensitive information into expense descriptions.</p>
+            </section>
+            <section id="usage" aria-labelledby="usage-title">
+                <span class="terms-number" aria-hidden="true">02</span>
+                <h2 id="usage-title">How We Use Your Data</h2>
+                <p>Technical request information is used to deliver the pages you request. Where server logs are enabled, they may also help diagnose errors and investigate misuse.</p>
+                <p>Expense information is used to display, filter, edit, and delete your records and calculate totals separately for each currency. The workspace identifier links these records to your browser. The form-security token helps prevent unauthorized form submissions.</p>
+                <p>The current app does not include features for selling personal information, personalized advertising, or connecting to your bank account.</p>
+            </section>
+            <section id="storage" aria-labelledby="storage-title">
+                <span class="terms-number" aria-hidden="true">03</span>
+                <h2 id="storage-title">Data Storage</h2>
+                <p>Expense records are saved in a database on the computer running Spend Wise. Records remain until deleted through the expense list or removed by the site operator. Deleting an expense removes its record from the active database; it does not guarantee removal from any independently created backups.</p>
+                <p>Your workspace is associated with this browser rather than an account. Anyone using the same browser profile can access it. Clearing the cookie or allowing it to expire removes your access but does not delete saved records, and account-based recovery is not available. Delete records you no longer need before clearing the cookie.</p>
+                <p>Technical logs, if enabled, and any backups are managed by the hosting environment. Their storage region and retention period have not been specified for this preview.</p>
+                <p>No online service can guarantee absolute security. Keep your own copies of important financial records and avoid including bank credentials, full payment-card numbers, or unnecessary sensitive information in expense descriptions.</p>
+            </section>
+            <section id="third-parties" aria-labelledby="third-parties-title">
+                <span class="terms-number" aria-hidden="true">04</span>
+                <h2 id="third-parties-title">Third Party Services</h2>
+                <p>Spend Wise loads its typefaces from Google Fonts. Your browser makes requests to Google to retrieve the fonts, which involves sharing your IP address and request details. Read <a href="https://developers.google.com/fonts/faq/privacy" style="text-decoration: underline;">Google Fonts’ privacy information</a> for details about that service.</p>
+                <p>The current app does not integrate payment processing, bank connections, or third-party analytics. If additional services are introduced, this policy should be updated to explain the information they receive and why.</p>
+                <p>Links to external websites take you to services with their own privacy practices. Review their policies before providing personal information.</p>
+            </section>
+            <section id="contact" aria-labelledby="contact-title">
+                <span class="terms-number" aria-hidden="true">05</span>
+                <h2 id="contact-title">Contact Us</h2>
+                {% if config.get('PRIVACY_CONTACT_EMAIL') %}
+                <p>For privacy questions or requests concerning your information, email <a href="mailto:{{ config['PRIVACY_CONTACT_EMAIL'] }}" style="text-decoration: underline;">{{ config['PRIVACY_CONTACT_EMAIL'] }}</a>.</p>
+                {% else %}
+                <p>A dedicated privacy contact address has not yet been published for this preview. If you received access directly from the site operator, use that existing contact channel for privacy questions.</p>
+                {% endif %}
+                <p>Depending on your location and applicable law, you may have rights to access, correct, or delete personal information. When making a request, describe your concern without including passwords or sensitive financial details.</p>
+                <p>Updates to this policy will appear on this page with a revised date. Where required by law, additional notice or consent will be provided for material changes.</p>
+            </section>
+        </div>
+    </div>
+</article>
+{% endblock %}

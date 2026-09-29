@@ -1,0 +1,14 @@
+{% extends "expense_base.html" %}
+{% block title %}Delete expense — Spend Wise{% endblock %}
+{% block expense_content %}
+<header class="expense-heading"><h1>Delete this expense?</h1><p>This removes the record from your browser workspace.</p></header>
+<div class="expense-card expense-form">
+    <h2>{{ expense.description }}</h2>
+    <p>{{ expense.expense_date }} · {{ money(expense.amount_minor, expense.currency, expense.fraction_digits) }}</p>
+    <form method="post" class="expense-actions">
+        <input type="hidden" name="csrf_token" value="{{ session['expense_csrf'] }}">
+        <button type="submit" class="expense-button expense-delete-button">Delete expense</button>
+        <a class="expense-link" href="{{ url_for('expenses.index') }}">Keep expense</a>
+    </form>
+</div>
+{% endblock %}

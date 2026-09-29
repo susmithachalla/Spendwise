@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/expenses.css') }}">
+{% endblock %}
+{% block content %}
+<div class="expense-page">
+    {% for message in get_flashed_messages() %}
+    <p class="expense-notice" role="status">{{ message }}</p>
+    {% endfor %}
+    {% block expense_content %}{% endblock %}
+    <aside class="workspace-note">
+        <strong>Your browser workspace</strong>
+        <p>Expenses are saved on this app’s server and linked to this browser by a cookie, not an account.
+        Use the same browser to return. Clearing cookies or leaving this workspace unused for a year loses access to its saved records.
+        Anyone using this browser profile can see them.</p>
+    </aside>
+</div>
+{% endblock %}
