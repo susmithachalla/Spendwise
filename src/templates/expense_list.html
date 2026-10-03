@@ -1,0 +1,17 @@
+<section class="expense-card expense-list" aria-label="Saved expenses">
+    {% if expenses %}
+    <div class="expense-table-scroll" tabindex="0" role="region" aria-label="Expense table; scroll horizontally on smaller screens">
+    <table class="expense-table">
+        <caption>{{ expenses|length }} expense{{ 's' if expenses|length != 1 }}{% if selected or month or category or income_category %} matching your filters{% endif %}</caption>
+        <thead><tr><th scope="col">Date</th><th scope="col">Description</th><th scope="col">Category</th><th scope="col" class="expense-amount">Amount</th><th scope="col">Actions</th></tr></thead>
+        <tbody>{% for expense in expenses %}<tr>
+            <td><time datetime="{{ expense.expense_date }}">{{ expense.expense_date }}</time></td><td>{{ expense.description }}</td><td><span class="category-label">{{ category_icon(expense.category) }}<span>{{ expense.category }}</span></span></td>
+            <td class="expense-amount">{{ money(expense.amount_minor, expense.currency, expense.fraction_digits) }}{% if expense.reporting_display %}<small class="reporting-value" title="1 USD = {{ expense.reporting_rate }} {{ expense.currency }} · rate date {{ expense.reporting_rate_date }}">≈ {{ expense.reporting_display }}</small>{% endif %}</td>
+            <td><div class="expense-row-actions"><a href="{{ url_for('expenses.edit', expense_id=expense.id) }}" aria-label="Edit {{ expense.description }}">Edit</a><a class="expense-danger" href="{{ url_for('expenses.delete', expense_id=expense.id) }}" aria-label="Delete {{ expense.description }}">Delete</a></div></td>
+        </tr>{% endfor %}</tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="expense-empty"><h2>{{ 'No matching expenses' if selected or month or category else 'Your first expense starts here' }}</h2><p>{{ 'Try another category, currency, or month, or clear your filters.' if selected or month or category else 'Choose a currency, enter an amount, and keep track of your spending.' }}</p><a class="expense-link" href="{{ url_for('expenses.add', **workspace_filters) }}">Add an expense →</a></div>
+    {% endif %}
+</section>

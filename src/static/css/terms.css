@@ -1,0 +1,66 @@
+.terms-page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 3rem 2rem 5rem;
+    color: var(--brand-primary);
+}
+
+.terms-back { font-size: 0.875rem; color: var(--accent); }
+.terms-back:hover { text-decoration: underline; }
+.terms-heading { max-width: 760px; margin-bottom: 2.5rem; }
+.terms-eyebrow {
+    margin: 2rem 0 0.75rem;
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.terms-heading h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    line-height: 1.15;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+.terms-intro { color: var(--ink-muted); font-size: 1.05rem; max-width: 640px; }
+.terms-date { margin-top: 1.25rem; color: var(--ink-muted); font-size: 0.8rem; }
+.terms-layout { display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: 2rem; align-items: start; }
+.terms-contents {
+    position: sticky;
+    top: 84px;
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    background: var(--brand-primary);
+    color: var(--brand-white);
+}
+.terms-contents h2 { font-size: 0.95rem; margin-bottom: 1rem; }
+.terms-contents a { display: block; padding: 0.6rem 0; font-size: 0.8rem; }
+.terms-contents a:hover { color: var(--brand-secondary); }
+.terms-page a:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; border-radius: 2px; }
+.terms-contents a:focus-visible { outline-color: var(--brand-secondary); }
+.terms-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 0 2.5rem;
+}
+.terms-card section { padding: 2rem 0; scroll-margin-top: 84px; }
+.terms-card section + section { border-top: 1px solid var(--border-soft); }
+.terms-number { color: var(--accent); font-size: 0.75rem; font-weight: 600; }
+.terms-card h2 { font-size: 1.3rem; margin: 0.35rem 0 1rem; line-height: 1.4; }
+.terms-card p, .terms-card li { color: var(--ink-soft); font-size: 0.95rem; line-height: 1.85; }
+.terms-card p + p, .terms-card ul + p { margin-top: 1rem; }
+.terms-card ul { padding-left: 1.25rem; margin-top: 1rem; }
+.terms-card li + li { margin-top: 0.5rem; }
+@media (max-width: 800px) {
+    .terms-layout { grid-template-columns: 1fr; gap: 1.25rem; }
+    .terms-contents { position: static; }
+}
+@media (max-width: 480px) {
+    .terms-page { padding: 2rem 1rem 3rem; }
+    .terms-card { padding: 0 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+}

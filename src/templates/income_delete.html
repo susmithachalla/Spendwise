@@ -1,0 +1,15 @@
+{% extends "expense_base.html" %}
+{% block title %}Delete income — Spend Wise{% endblock %}
+{% block expense_content %}
+<header class="expense-heading"><h1>Delete this income?</h1><p>This removes the income record from your account.</p></header>
+<div class="expense-card expense-form">
+    <h2>{{ income.category }}</h2>
+    <p>{{ income.income_date }} · {{ money(income.amount_minor, income.currency, income.fraction_digits) }}</p>
+    {% if income.source %}<p>{{ income.source }}</p>{% endif %}
+    <form method="post" class="expense-actions">
+        <input type="hidden" name="csrf_token" value="{{ session['expense_csrf'] }}">
+        <button type="submit" class="expense-button expense-delete-button">Delete income</button>
+        <a class="expense-link" href="{{ url_for('income.index', **filters) }}">Keep income</a>
+    </form>
+</div>
+{% endblock %}

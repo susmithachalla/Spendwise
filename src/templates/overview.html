@@ -1,0 +1,13 @@
+{% extends "expense_base.html" %}
+{% block title %}Overview — Spend Wise{% endblock %}
+{% block expense_content %}
+<header class="expense-heading expense-heading-row"><div><h1>Overview</h1><p>Your money at a glance.</p>{% include 'income_setting.html' %}</div>{% include 'dashboard_actions.html' %}</header>
+{% include 'dashboard_summaries.html' %}
+<form class="expense-filters expense-card" method="get">
+    {% include 'period_filters.html' %}
+    <div class="filter-actions"><button class="expense-button" type="submit">Apply</button><a class="expense-link" href="{{ url_for('expenses.overview', currency='', month='') }}">Clear</a></div>
+</form>
+{% if session.get('user_id') %}{% include 'investment_list.html' %}{% endif %}
+{% if income_enabled and not has_period_income %}<p class="income-empty">No income added yet for this period and currency. <a class="expense-link" href="{{ url_for('income.add', **workspace_filters) }}">Add income</a></p>{% endif %}
+<nav class="transaction-switch" aria-label="Transaction type"><a href="{{ url_for('expenses.index', **workspace_filters) }}">Expenses</a>{% if income_enabled %}<a href="{{ url_for('income.index', **workspace_filters) }}">Income</a>{% endif %}{% if session.get('user_id') %}<a href="{{ url_for('investments.index', **workspace_filters) }}" {{ 'aria-current=page' if chart_kind == 'investments' }}>Investments</a>{% endif %}</nav>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% if income_enabled %}
+<section class="balance-section" aria-label="Income and remaining cash">
+    <h2 class="expense-subheading">Account totals · {{ month_label or 'All dates' }}</h2>
+    <p class="field-help">For the selected currency and period, across all categories. Each currency stays separate.</p>
+    <div class="currency-totals">{% for balance in balances %}<div class="expense-card currency-total">
+        <h3>{{ balance.currency }}</h3><dl class="balance-values">
+        <div><dt>Total income</dt><dd>{{ balance.income }}</dd></div>
+        <div><dt>Total expenses</dt><dd>{{ balance.expenses }}</dd></div>
+        <div><dt>Remaining cash</dt><dd>{{ balance.remaining }}</dd></div></dl>
+        {% if not balance.has_income %}<p class="field-help">No income recorded for this period and currency. “-” means missing data, not zero.</p>{% endif %}
+    </div>{% else %}<p class="field-help">Income: - · Expenses: - · Remaining cash: -<br>No records for this period. Choose a currency to view its totals.</p>{% endfor %}</div>
+    {% if not has_period_income %}<div class="income-empty"><h3>No income added yet</h3><p class="field-help">For this period and currency. Add income to calculate your remaining cash.</p><a class="expense-button" href="{{ url_for('income.add', **workspace_filters) }}">Add income</a></div>{% endif %}
+</section>
+{% endif %}

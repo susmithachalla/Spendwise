@@ -1,0 +1,42 @@
+{% for chart in charts %}
+<section class="chart-pair" aria-label="{{ chart.currency }} {{ chart_kind }} charts">
+    <article class="expense-card trend-card"><header class="chart-heading"><h2>Monthly trend</h2><span>{{ chart.currency }}</span></header>
+        <div class="monthly-trend">
+            <div class="column-layout">
+                <div class="chart-axis" aria-hidden="true">{% for tick in chart.month_ticks %}<span>{{ tick }}</span>{% endfor %}</div>
+                <div class="column-scroll" tabindex="0" role="region" aria-label="Monthly amounts; scroll for more dates">
+                    <div class="column-plot" style="--days: {{ chart.month|length }}">
+                        <div class="chart-grid" aria-hidden="true">{% for tick in chart.month_ticks %}<span></span>{% endfor %}</div>
+                        {% for bar in chart.month %}
+                        <div class="column-day"><div class="column-slot"><button type="button" class="chart-column" style="height: {{ bar.height }}%; {{ 'min-height: 0;' if bar.height == 0 }}" aria-label="{{ bar.label }}: {{ bar.display }}" data-tip="{{ bar.label }} · {{ bar.display }}"></button></div><time datetime="{{ bar.label }}">{{ bar.short_date }}<small>{{ bar.year }}</small></time></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <article class="expense-card breakdown-card"><header class="chart-heading"><h2>{{ 'Investment activity' if chart_kind == 'investments' else 'Income breakdown' if chart_kind == 'income' else 'Spending breakdown' }}</h2><span>{{ chart.currency }}</span></header>
+        <div class="category-layout">
+            <div class="doughnut">
+                <svg viewBox="0 0 240 240" aria-label="{{ chart.currency }} {{ chart_kind }} by category" role="group">
+                    <circle cx="120" cy="120" r="96" fill="none" stroke="var(--border-soft)" stroke-width="30" aria-hidden="true"/>
+                    {% for bar in chart.category %}
+                    <circle class="doughnut-segment" cx="120" cy="120" r="96" fill="none" stroke="{{ bar.color }}" stroke-width="30" pathLength="100" stroke-dasharray="{{ bar.share }} {{ 100 - bar.share }}" stroke-dashoffset="{{ bar.offset }}" transform="rotate(-90 120 120)" tabindex="0" role="img" aria-label="{{ bar.label }}: {{ bar.display }}, {{ bar.percent }}%" data-tip="{{ bar.label }} · {{ bar.display }} · {{ bar.percent }}%" />
+                    {% endfor %}
+                </svg>
+                <div class="doughnut-total"><span>{{ 'Total activity' if chart_kind == 'investments' else 'Total income' if chart_kind == 'income' else 'Total spending' }}</span><strong>{{ chart.display }}</strong></div>
+            </div>
+            <ul class="chart-legend" aria-label="{{ chart.currency }} category amounts">
+                {% for bar in chart.category %}
+                <li><span class="legend-dot" style="background: {{ bar.color }}"></span><span class="legend-name category-label">{{ category_icon(bar.label) }}<span>{{ bar.label }}</span></span><strong>{{ bar.display }}</strong><span class="legend-percent">{{ bar.percent }}%</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </article>
+</section>
+{% else %}
+<section class="chart-pair" aria-label="No chart data">
+    <article class="expense-card chart-empty"><h2>Monthly trend</h2><p>{% if reporting.error %}Chart unavailable while exchange rates are missing.{% else %}No {{ 'investment activity' if chart_kind == 'investments' else 'income' if chart_kind == 'income' else 'spending' }} to chart for these filters.{% endif %}</p></article>
+    <article class="expense-card chart-empty"><h2>{{ 'Investment activity' if chart_kind == 'investments' else 'Income breakdown' if chart_kind == 'income' else 'Spending breakdown' }}</h2><p>{{ 'Original transactions are preserved below.' if reporting.error else 'Add a transaction or adjust your filters to see the breakdown.' }}</p></article>
+</section>
+{% endfor %}

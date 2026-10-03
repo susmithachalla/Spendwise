@@ -1,66 +1,64 @@
-# Spend Wise: multi-currency expenses
+# Spend Wise reporting currencies
 
-## Run and try it
+Original expenses, income, and investment purchases always retain their entered currency and amount. The transaction lists display these originals.
 
-From `/Users/susmithachalla/Documents/expense-tracker`:
+## Currency detection
 
-```sh
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python app.py
-```
+Dashboard reporting examines the current workspace's expenses and the signed-in account's investments and enabled income records **in the selected month** (or all dates when no month is selected), before category filtering. Hidden income is excluded while income tracking is off. Other users' records are never included.
 
-Open http://localhost:5001/expenses or choose **Expenses** in the navigation. Add an amount, currency, description, date, and category. INR, USD, EUR, and CAD appear first, followed by other current tender currencies from Babel's bundled CLDR data. This is currency recording, not currency conversion; cryptocurrency and arbitrary custom codes are not included.
+- No transactions: empty dashboard; no exchange-rate requests.
+- One currency: totals and charts remain in that currency; no conversion or rate requests.
+- Two or more currencies: all reporting data is normalized to USD, with one four-card summary and one pair of charts. Old currency query parameters do not restrict dashboard data. Currency filters are removed; month is remembered across pages.
 
-For example, add INR 500, USD 10, EUR 8, and CAD 12. You will see four separate totals. They must not become a single total of 530: the units differ. USD and CAD both use dollar symbols, so every display includes its currency code.
+Summary cards cover all categories. The active category filter affects only charts and the transaction list. Remaining cash is recorded income minus expenses minus investments, not total wealth. Missing income produces a dash; an actual zero income entry produces a numeric zero.
 
-## What changed, where, and why
+## Rates and persistence
 
-| File | Change | Why |
-| --- | --- | --- |
-| `currencies.py` | Currency names, symbols, supported codes, decimal rules, validation, and formatting. | One source of truth for currency behavior. INR/USD/EUR/CAD use two decimal places, JPY uses zero, and KWD uses three. Unsupported precision is rejected rather than silently rounded. |
-| `database/db.py` | Adds SQLite storage with `amount_minor`, `currency`, and `fraction_digits` on each expense. | Amounts remain exact: INR 125.50 becomes integer 12550 with precision 2. The currency and precision stay with the record rather than depending on a global setting. |
-| `expenses.py` | Adds list, add, edit, and delete routes; server validation; currency/month filtering; per-currency totals. | Implements the previously placeholder expense workflow end to end. Each query is scoped to the current browser workspace. POST forms require a security token and deletion requires confirmation. |
-| `app.py` | Registers expense routes, closes database connections, and configures signed browser sessions. | Wires the feature into Flask and preserves workspace access across server restarts using a stable signing key. |
-| `templates/expense_*.html`, `templates/expenses.html` | Form, list, empty state, totals, delete confirmation, and workspace notice. | Users can choose currencies and see exactly what was saved. Errors preserve form entries. Editing a currency does not convert the amount. |
-| `static/css/expenses.css`, `static/js/expenses.js` | Navy/teal responsive styling and currency-specific amount guidance. | Matches Spend Wise and explains decimal rules. JavaScript only changes guidance; saving, validation, filtering, and deletion also work without it. |
-| `templates/base.html`, `templates/landing.html`, `static/css/style.css` | Adds navigation and a landing-page entry point, including on mobile. | Makes the feature discoverable. Landing-page sample charts are still illustrative. |
-| `templates/privacy.html` | Documents stored records, session cookies, deletion, and browser access. | The earlier policy stated expense storage did not exist; it must reflect the new behavior. |
-| `requirements.txt`, `.gitignore` | Adds Babel and excludes local database, secrets, caches, and virtual environment. | Supplies maintained currency metadata and keeps local runtime files out of source control. |
-| `tests/test_expenses.py` | Covers precision, distinct totals, validation, editing, deletion, persistence, escaping, and workspace isolation. | Verifies money handling and access boundaries, including invalid requests sent directly to the server. |
+`reporting.py` is the single normalization layer. It uses [Frankfurter's public API](https://frankfurter.dev/) for USD-base rates on each transaction date. INR amounts are divided by INR-per-USD; the same convention applies to every quote currency. No amounts, notes, account IDs, or payer details are sent to the provider.
 
-Currency metadata comes from [Babel's currency APIs](https://babel.pocoo.org/en/latest/api/numbers.html), not an exchange-rate service. Update the pinned dependency when currency definitions change.
+Rate precedence: cached rate, configured historical rate, public historical rate, configured current fallback, public latest fallback. The returned observation date and source are retained. Dates with no historical observation may use the latest fallback; future-dated entries also use a fallback.
 
-## Searchable currency selector
+`reporting_rates` caches date/currency rates. `reporting_conversions` retains the original currency/minor amount/precision, transaction date, rate, rate date/source, and resulting USD cents for each original transaction version. Edits to date, currency, or amount create a new conversion version; old audit values are preserved. Every conversion starts from the original amount, never from a previous reporting value. Single-currency mode ignores conversion snapshots and shows originals.
 
-The expense form now enhances the existing currency select with a compact searchable dropdown. Popular currencies (INR, USD, EUR, GBP, CAD, AUD, AED, SGD) appear first; all supported currencies remain available below. Search matches codes, currency names, symbols, and country names derived from the same Babel territory data. No second currency catalog is maintained.
+Each transaction is rounded once to USD cents using Decimal ROUND_HALF_UP; those same cents drive cards, category/monthly charts, and optional secondary transaction values. This makes all displayed transaction values sum to the reporting totals. USD transactions keep their original value.
 
-The popup is capped at 320px, scrolls internally, and opens above the field when that offers more space. Arrow keys navigate, Enter chooses, Escape cancels, and Tab leaves the control. Search has combobox/listbox semantics, active-option announcements, and a no-results state. The native select remains the source of the submitted `currency` value and works as a fallback without JavaScript. Database storage, supported currency codes, decimal rules, and server validation are unchanged.
+A required missing/invalid rate makes all analytics unavailable for that report rather than silently omitting a currency. Original records remain available and editable. Retry after connectivity is restored or configure fallback rates. Cached conversions remain usable offline.
 
-The component lives in `static/js/expenses.js` and `static/css/expenses.css`; `templates/expense_form.html` exposes the existing options and country-search metadata. No frontend framework is used.
+## Configuration
 
-## Storage and current limits
-
-This project had no functioning account system or expense database. This feature creates a **browser workspace**, not a logged-in account. A signed HttpOnly cookie identifies it; different browser profiles have separate records. Anyone using the same browser profile can access its workspace. Records are stored in `instance/spendwise.sqlite`; the persistent signing key is in `instance/.secret_key` unless `SPENDWISE_SECRET_KEY` is set. Keep that key private and stable. The local server uses HTTP; use HTTPS and secure cookies if adapting it for deployment.
-
-The cookie renews with use and expires after a year of inactivity. Clearing it loses workspace access, but does not remove database records. No account recovery or cross-device sync exists yet. Delete unwanted records using the expense list before clearing cookies. Database deletion does not purge independent backups.
-
-No existing expense migration was needed because the original Spend Wise database module was empty. ExpenseFlow v2 and its database were not changed. Budgets, live charts, recurring rules, and account authentication are still unimplemented in Spend Wise; this change does not claim to implement them. Future budgets and recurring rules must also store a currency, and charts must filter or group by currency. Automatic conversion would additionally require a chosen base currency, dated exchange rates, a rate source, and an explicit conversion policy.
+No invented rates ship with the app. To supply fallback rates, set `SPENDWISE_USD_RATES` to a JSON object of quote-currency units per USD before starting Flask. The application also accepts `REPORTING_HISTORICAL_RATES` as a date-to-currency-to-rate mapping in Flask configuration. `REPORTING_RATE_PROVIDER=None` disables network lookup for manual configuration or deterministic tests.
 
 ## Verification
 
-```sh
-.venv/bin/python -m pytest -q
-```
+Run `.venv/bin/python -m pytest -q`. Tests use explicitly labelled fixture rates without external network requests. The optional Playwright browser scripts use temporary databases; no user records are changed.
 
-Tests use temporary databases, not the user's expense records.
 
-Optional browser checks (requires Playwright and Chrome, or Playwright's installed Chromium):
+Investment activity uses a dedicated Investments history and activity subtype.
+Contribution is cash invested; Return, Withdrawal, Dividend, Interest, Capital gain,
+and Other income are cash received. All amounts remain positive in storage.
+The shared reporting classifier counts cash received toward Income, contributions
+only toward Investments, and ordinary expenses toward Expenses. Remaining cash is
+Income minus Expenses minus Investments. Investment charts show gross activity by
+subtype, while Income charts include investment cash received. Category/activity
+filters do not change period summary totals or the period reporting currency.
 
-```sh
-.venv/bin/python -m pip install playwright
-.venv/bin/python tests/browser_currency_selector.py
-```
+Existing investment purchases default to Contribution through an idempotent schema
+upgrade. Legacy Income records categorized as Investments appear as Return in
+Investments history, with their original storage, amounts, currency, and edit/delete
+identity preserved. These returns remain reportable when regular income tracking
+is off. New investment income is entered through the Investments form.
 
-These check country/name/code/symbol search, popular and full lists, keyboard/focus behavior, unchanged form submission, editing, mobile scrolling, and the no-JavaScript fallback. They use a temporary database and browser profile.
+## Source layout and navigation periods
+
+Application Python modules, templates, and static assets live under `src/`.
+Run `.venv/bin/python app.py` (compatibility launcher), or
+`.venv/bin/python -m flask --app src.app run --port 5001` from the project root.
+The existing root `instance/` database and session key remain in place.
+Tests stay in `tests/` and import the `src` package.
+
+`src/periods.py` validates navigation months as real `YYYY-MM` values. Empty
+means all dates; omitted values retain the selected workspace period. Invalid
+values redirect with a flash notice to the previous valid period. Templates use
+`month_label` for readable headings and canonical workspace filters for links.
+Currency is preserved for entry forms without restricting dashboard reporting.
+Add-button active styling depends only on the exact add endpoint.

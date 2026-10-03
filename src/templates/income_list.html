@@ -1,0 +1,13 @@
+<section class="expense-card expense-list" aria-label="Saved income">
+    <div class="expense-table-scroll" tabindex="0" role="region" aria-label="Income table; scroll horizontally on smaller screens">
+    <table class="expense-table">
+        <caption>{{ income_rows|length }} income record{{ 's' if income_rows|length != 1 }} for the selected filters</caption>
+        <thead><tr><th scope="col">Date</th><th scope="col">Category</th><th scope="col">Source</th><th scope="col" class="expense-amount">Amount</th><th scope="col">Actions</th></tr></thead>
+        <tbody>{% for row in income_rows %}<tr>
+            <td><time datetime="{{ row.income_date }}">{{ row.income_date }}</time></td><td><span class="category-label">{{ category_icon(row.category) }}<span>{{ row.category }}</span></span></td><td>{{ row.source or '—' }}{% if row.notes %}<details class="transaction-details"><summary>Details</summary><p>{{ row.notes }}</p></details>{% endif %}</td>
+            <td class="expense-amount">{{ money(row.amount_minor, row.currency, row.fraction_digits) }}{% if row.reporting_display %}<small class="reporting-value" title="1 USD = {{ row.reporting_rate }} {{ row.currency }} · rate date {{ row.reporting_rate_date }}">≈ {{ row.reporting_display }}</small>{% endif %}</td>
+            <td><div class="expense-row-actions"><a href="{{ url_for('income.edit', income_id=row.id, **workspace_filters) }}">Edit</a><a class="expense-danger" href="{{ url_for('income.delete', income_id=row.id, **workspace_filters) }}">Delete</a></div></td>
+        </tr>{% else %}<tr><td colspan="5">No income matching these filters.</td></tr>{% endfor %}</tbody>
+    </table>
+    </div>
+</section>

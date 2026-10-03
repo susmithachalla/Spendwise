@@ -1,0 +1,40 @@
+{% extends "expense_base.html" %}
+{% from "macros/category_icon.html" import category_icon with context %}
+{% block title %}{{ 'Investments' if chart_kind == 'investments' else 'Income' if chart_kind == 'income' else 'Expenses' }} — Spend Wise{% endblock %}
+{% block expense_content %}
+<header class="expense-heading expense-heading-row">
+    <div><h1>{{ 'Your investments' if chart_kind == 'investments' else 'Your income' if chart_kind == 'income' else 'Your expenses' }}</h1><p>{{ month_label or 'All dates' }} · {{ selected or 'All currencies' }}</p></div>
+    {% include 'dashboard_actions.html' %}
+</header>
+{% include 'dashboard_summaries.html' %}
+{% include 'income_setting.html' %}
+<form class="expense-filters expense-card" method="get">
+    {% include 'period_filters.html' %}
+    {% if chart_kind == 'income' %}
+    <div><label for="income-filter">Income category</label><select class="form-input" id="income-filter" name="income_category"><option value="">All categories</option>{% for name in income_categories %}<option {{ 'selected' if name == income_category }}>{{ name }}</option>{% endfor %}</select></div>
+    {% elif chart_kind == 'investments' %}
+    <div><label for="activity-filter">Investment activity</label><select class="form-input" id="activity-filter" name="subtype"><option value="">All activities</option>{% for name in investment_subtypes %}<option {{ 'selected' if name == investment_subtype }}>{{ name }}</option>{% endfor %}</select></div>
+    {% else %}
+    <div><label for="filter-category">Expense category</label><select class="form-input" id="filter-category" name="category"><option value="">All categories</option>{% for group, options in category_groups.items() %}<optgroup label="{{ group }}">{% for name, description, color in options %}<option value="{{ name }}" {{ 'selected' if name == category }}>{{ name }}</option>{% endfor %}</optgroup>{% endfor %}{% if legacy_categories %}<optgroup label="Existing categories">{% for name in legacy_categories %}<option value="{{ name }}" {{ 'selected' if name == category }}>{{ name }} (existing)</option>{% endfor %}</optgroup>{% endif %}</select></div>
+    {% endif %}
+    <div class="filter-actions"><button class="expense-button" type="submit">Apply</button><a class="expense-link" href="{{ url_for('investments.index' if chart_kind == 'investments' else 'income.index' if chart_kind == 'income' else 'expenses.index', currency='', month='') }}">Clear</a></div>
+</form>
+<div class="transaction-heading">
+    <nav class="transaction-switch" aria-label="Transaction type">
+        <a href="{{ url_for('expenses.index', **workspace_filters) }}" {% if chart_kind == 'expense' %}aria-current="page"{% endif %}>Expenses</a>
+        {% if income_enabled %}<a href="{{ url_for('income.index', **workspace_filters) }}" {% if chart_kind == 'income' %}aria-current="page"{% endif %}>Income</a>{% endif %}
+    {% if session.get('user_id') %}<a href="{{ url_for('investments.index', **workspace_filters) }}" {{ 'aria-current=page' if chart_kind == 'investments' }}>Investments</a>{% endif %}</nav>
+    <p class="field-help">Charts and transactions: {{ income_category if chart_kind == 'income' and income_category else category if chart_kind != 'income' and category else 'all categories' }}.</p>
+</div>
+{% if chart_kind == 'investments' %}<p class="field-help">Activity charts show cash amounts by subtype, including contributions and returns. The Investments card counts contributions only.</p>{% elif chart_kind == 'income' %}<p class="field-help">Income charts include investment returns. View their transactions under Investments.</p>{% endif %}
+{% include 'financial_charts.html' %}
+{% if chart_kind == 'income' %}
+    {% if not has_period_income %}<p class="income-empty">No income added yet for this period and currency. <a class="expense-link" href="{{ url_for('income.add', **workspace_filters) }}">Add income</a></p>{% endif %}
+    {% include 'income_list.html' %}
+{% elif chart_kind == 'investments' %}
+    {% include 'investment_list.html' %}
+{% else %}
+    {% include 'expense_list.html' %}
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/expense-charts.js') }}"></script>{% endblock %}

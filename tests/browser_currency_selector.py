@@ -12,8 +12,8 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from playwright.sync_api import sync_playwright, expect
-from app import app
-from currencies import CURRENCIES
+from src.app import app
+from src.currencies import CURRENCIES
 
 
 def main():

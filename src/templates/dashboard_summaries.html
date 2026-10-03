@@ -1,0 +1,13 @@
+{% if reporting.isMultiCurrency %}<p class="summary-caption">Multiple currencies detected. Dashboard totals are converted to USD.</p>{% endif %}
+{% if reporting.error %}<p class="expense-notice" role="status">{{ reporting.error }}</p>{% endif %}
+<section class="dashboard-summaries" aria-label="Period totals">
+    {% for balance in balances %}
+    <div class="summary-row" aria-label="{{ balance.currency }} totals">
+        <div class="expense-card summary-card"><span>Income · {{ balance.currency }}</span><strong>{{ balance.income if balance.has_income else '—' }}</strong>{% if not balance.has_income %}<small>{{ 'No income recorded' if income_enabled else 'Income tracking is off' }}</small>{% endif %}</div>
+        <div class="expense-card summary-card"><span>Expenses · {{ balance.currency }}</span><strong>{{ balance.expenses }}</strong></div>
+        <div class="expense-card summary-card"><span>Investments · {{ balance.currency }}</span><strong>{{ balance.investments }}</strong></div>
+        <div class="expense-card summary-card"><span>Remaining cash · {{ balance.currency }}</span><strong>{{ balance.remaining if balance.has_income else '—' }}</strong></div>
+    </div>
+    {% else %}<div class="summary-row">{% for label in ('Income', 'Expenses', 'Investments', 'Remaining cash') %}<div class="expense-card summary-card"><span>{{ label }}</span><strong>—</strong><small>No records for this period</small></div>{% endfor %}</div>{% endfor %}
+<p class="summary-caption">Summary totals cover the selected period in the reporting currency, across all categories. Category filters apply only to charts and transactions. Remaining cash = income − expenses − investments recorded here; it is not your total wealth.{% if income_enabled %} “—” means no income recorded, not zero.{% endif %}</p>
+</section>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Create account — Spend Wise{% endblock %}
+
+{% block content %}
+
+<section class="auth-section">
+    <div class="auth-container">
+
+        <div class="auth-header">
+            <h1 class="auth-title">Create your account</h1>
+            <p class="auth-subtitle">Start tracking your expenses with Spend Wise</p>
+        </div>
+
+        <div class="auth-card">
+            {% if error %}
+            <div class="auth-error" role="alert">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('register') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <div class="form-group">
+                    <label for="name">Full name</label>
+                    <input type="text" id="name" name="name" value="{{ name }}" maxlength="100" autocomplete="name"
+                           class="form-input" placeholder="firstname lastname"
+                           required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" name="email" value="{{ email }}" maxlength="254" autocomplete="email"
+                           class="form-input" placeholder="username@example.com"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" maxlength="128" autocomplete="new-password" minlength="8"
+                           class="form-input" placeholder="Min. 8 characters"
+                           required>
+                </div>
+                <button type="submit" class="btn-submit">Create account</button>
+            </form>
+        </div>
+
+        <p class="auth-switch">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Sign in</a>
+        </p>
+
+    </div>
+</section>
+
+{% endblock %}

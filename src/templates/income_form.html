@@ -1,0 +1,61 @@
+{% extends "expense_base.html" %}
+
+{% block title %}{{ 'Edit income' if editing else 'Add your first income' if first else 'Add income' }} — Spend Wise{% endblock %}
+{% block expense_content %}
+<a class="expense-link" href="{{ url_for('income.index', **filters) }}">← All income</a>
+<header class="expense-heading">
+    <p class="expense-eyebrow">Income in your currency</p>
+    <h1>{{ 'Edit income' if editing else 'Add your first income' if first else 'Add income' }}</h1>
+    <p>Record what came in. Payer and notes are optional.</p>
+    {% include 'dashboard_actions.html' %}
+</header>
+<form class="expense-card expense-form" method="post">
+    <input type="hidden" name="month" value="{{ filters.month }}">
+    <input type="hidden" name="csrf_token" value="{{ session['expense_csrf'] }}">
+    {% if errors %}
+    <div class="auth-error" role="alert"><strong>Check your income</strong><ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul></div>
+    {% endif %}
+    <div class="expense-fields">
+        <div class="form-group">
+            <label id="currency-label" for="currency">Currency</label>
+            <select class="form-input" name="currency" id="currency" required aria-describedby="currency-help">
+                {% if values.currency not in currencies %}<option value="" selected>Choose a currency</option>{% endif %}
+                {% for code, item in currencies.items() %}
+                <option value="{{ code }}" data-digits="{{ item.digits }}" data-countries="{{ item.countries }}" {{ 'selected' if code == values.currency }}>{{ code }} — {{ item.name }} ({{ item.symbol }})</option>
+                {% endfor %}
+            </select>
+            <p class="field-help" id="currency-help">INR is Indian rupees; USD and CAD are different dollar currencies.</p>
+        </div>
+        <div class="form-group">
+            <label for="amount">Amount <span id="amount-code">({{ values.currency }})</span></label>
+            <input class="form-input" id="amount" name="amount" type="text" inputmode="decimal" maxlength="24" value="{{ values.amount }}" required aria-describedby="amount-help" placeholder="e.g. 125.50">
+            <p class="field-help" id="amount-help" aria-live="polite">Use a decimal point without commas. The amount is saved without conversion or rounding.</p>
+        </div>
+        <div class="form-group">
+            <label for="income_date">Date</label>
+            <input class="form-input" type="date" id="income_date" name="income_date" value="{{ values.income_date }}" required>
+        </div>
+        <div class="form-group">
+            <label for="income-category">Category (required)</label>
+            <select class="form-input" id="income-category" name="category" required>
+                <option value="" disabled {{ 'selected' if values.category not in income_categories }}>Select a category</option>
+                {% for name in income_categories %}<option value="{{ name }}" {{ 'selected' if name == values.category }}>{{ name }}</option>{% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="source">Who paid you? <span class="field-help">(optional)</span></label>
+        <input class="form-input" id="source" name="source" value="{{ values.source }}" maxlength="200" placeholder="Employer or client name">
+    </div>
+    <div class="form-group">
+        <label for="notes">Notes <span class="field-help">(optional)</span></label>
+        <textarea class="form-input" id="notes" name="notes" rows="3" maxlength="2000" placeholder="Add details, such as October salary or project payment.">{{ values.notes }}</textarea>
+    </div>
+    <p class="field-help">You can record zero income. A dash in summaries means no income has been recorded.</p>
+    <div class="expense-actions">
+        <button class="expense-button" type="submit">{{ 'Save changes' if editing else 'Save income' }}</button>
+        <a class="expense-link" href="{{ url_for('expenses.overview' if first else 'income.index', **filters) }}">{{ 'Skip for now' if first else 'Cancel' }}</a>
+    </div>
+</form>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/expenses.js') }}"></script>{% endblock %}

@@ -1,0 +1,11 @@
+<div class="income-actions">
+    {% for endpoint, label, visible in [
+        ('expenses.add', '+ Add expense', true),
+        ('income.add', '+ Add income', nav_income_enabled),
+        ('investments.add', '+ Add investment', session.get('user_id'))
+    ] %}
+    {% if visible %}
+    <a class="expense-button{{ ' secondary-button' if request.endpoint != endpoint }}" href="{{ url_for(endpoint, **workspace_filters) }}"{% if request.endpoint == endpoint %} aria-current="page"{% endif %}>{{ label }}</a>
+    {% endif %}
+    {% endfor %}
+</div>

@@ -1,0 +1,4 @@
+<div><label for="filter-month">Month</label><input class="form-input" id="filter-month" name="month" type="month" value="{{ month }}"></div>
+
+<input type="hidden" name="currency" value="{{ workspace_filters.get('currency', '') }}">
+<script src="{{ url_for('static', filename='js/period_filters.js') }}" defer></script>

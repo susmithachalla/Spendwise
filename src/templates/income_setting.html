@@ -1,0 +1,11 @@
+{% if session.get('user_id') %}
+<details class="income-preferences">
+    <summary>Income tracking: {{ 'On' if income_enabled else 'Off' }} <span aria-hidden="true">·</span> <span class="expense-link">Manage</span></summary>
+    <form class="income-setting" method="post" action="{{ url_for('income.settings', **workspace_filters) }}">
+        <input type="hidden" name="csrf_token" value="{{ session['expense_csrf'] }}">
+        <input type="hidden" name="enabled" value="{{ '0' if income_enabled else '1' }}">
+        <span class="field-help">{{ 'Turning this off keeps your saved income.' if income_enabled else 'Optional · track income and remaining cash alongside expenses.' }}</span>
+        <button class="income-setting-action{{ ' is-destructive' if income_enabled else '' }}" type="submit">{{ 'Disable income tracking' if income_enabled else 'Enable income tracking' }}</button>
+    </form>
+</details>
+{% endif %}
